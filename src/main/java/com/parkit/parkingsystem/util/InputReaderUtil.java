@@ -10,6 +10,11 @@ public class InputReaderUtil {
     private static Scanner scan = new Scanner(System.in);
     private static final Logger logger = LogManager.getLogger("InputReaderUtil");
 
+    /**
+     * Permet de récupérer le choix d'action renseigné par l'utilisateur.
+     *
+     * @return un entier correspondant au choix de l'utilsiateur ou -1 si une erreur c'est produite.
+     */
     public int readSelection() {
         try {
             int input = Integer.parseInt(scan.nextLine());
@@ -21,6 +26,13 @@ public class InputReaderUtil {
         }
     }
 
+    /**
+     * Permet de récupérer la plaque d'immmatriculation du véhicule de l'utilisateur que celui-ci renseigne en console.
+     *
+     * @return une String représentant la plaque d'immatriculation.
+     *
+     * @throws Exception
+     */
     public String readVehicleRegistrationNumber() throws Exception {
         try {
             String vehicleRegNumber= scan.nextLine();
