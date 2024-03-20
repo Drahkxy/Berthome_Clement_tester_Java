@@ -21,18 +21,36 @@ public class FareCalculatorService {
         LocalDateTime inTime = ticket.getInTime();
         LocalDateTime outTime = ticket.getOutTime();
 
-        long duration = Duration.between(inTime, outTime).toHours();
+        Duration duration = Duration.between(inTime, outTime);
+
 
         //TODO: Some tests are failing here. Need to check if this logic is correct
 
+
         switch (ticket.getParkingSpot().getParkingType()){
             case CAR: {
-                double price = duration < 1 ? Fare.CAR_RATE_PER_HOUR * 0.75 : Fare.CAR_RATE_PER_HOUR * duration;
+                double price;
+
+                if (duration.toMinutes() < 30)
+                    price = 0;
+                else if (duration.toMinutes() < 60)
+                    price = Fare.CAR_RATE_PER_HOUR * 0.75;
+                else
+                    price = Fare.CAR_RATE_PER_HOUR * duration.toHours();
+
                 ticket.setPrice(price);
                 break;
             }
             case BIKE: {
-                double price = duration < 1 ? Fare.BIKE_RATE_PER_HOUR * 0.75 : Fare.BIKE_RATE_PER_HOUR * duration;
+                double price;
+
+                if (duration.toMinutes() < 30)
+                    price = 0;
+                else if (duration.toMinutes() < 60)
+                    price = Fare.BIKE_RATE_PER_HOUR * 0.75;
+                else
+                    price = Fare.BIKE_RATE_PER_HOUR * duration.toHours();
+
                 ticket.setPrice(price);
                 break;
             }
