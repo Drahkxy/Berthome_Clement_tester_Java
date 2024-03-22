@@ -7,8 +7,12 @@ import java.util.Scanner;
 
 public class InputReaderUtil {
 
-    private static Scanner scan = new Scanner(System.in);
-    private static final Logger logger = LogManager.getLogger("InputReaderUtil");
+    private final Scanner scan;
+    private final Logger logger = LogManager.getLogger("InputReaderUtil");
+
+    public InputReaderUtil (Scanner scan) {
+        this.scan = scan;
+    }
 
     /**
      * Permet de récupérer le choix d'action renseigné par l'utilisateur.
@@ -20,7 +24,7 @@ public class InputReaderUtil {
             int input = Integer.parseInt(scan.nextLine());
             return input;
         }catch(Exception e){
-            logger.error("Error while reading user input from Shell", e);
+            //logger.error("Error while reading user input from Shell", e);
             System.out.println("Error reading input. Please enter valid number for proceeding further");
             return -1;
         }
@@ -33,7 +37,7 @@ public class InputReaderUtil {
      *
      * @throws Exception
      */
-    public String readVehicleRegistrationNumber() throws Exception {
+    public String readVehicleRegistrationNumber() throws Exception{
         try {
             String vehicleRegNumber= scan.nextLine();
             if(vehicleRegNumber == null || vehicleRegNumber.trim().length()==0) {
