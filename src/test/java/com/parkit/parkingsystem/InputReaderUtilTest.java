@@ -49,7 +49,9 @@ public class InputReaderUtilTest {
 			String result = inputReaderUtil.readVehicleRegistrationNumber();
 
 			assertEquals("AB-123-CD", result);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		verify(scanner, times(1)).nextLine();
 	}

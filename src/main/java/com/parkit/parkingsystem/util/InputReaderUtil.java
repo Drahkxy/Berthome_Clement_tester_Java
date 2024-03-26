@@ -34,10 +34,8 @@ public class InputReaderUtil {
      * Permet de récupérer la plaque d'immmatriculation du véhicule de l'utilisateur que celui-ci renseigne en console.
      *
      * @return une String représentant la plaque d'immatriculation.
-     *
-     * @throws Exception
      */
-    public String readVehicleRegistrationNumber() throws Exception{
+    public String readVehicleRegistrationNumber() throws Exception {
         try {
             String vehicleRegNumber= scan.nextLine();
             if(vehicleRegNumber == null || vehicleRegNumber.trim().length()==0) {
