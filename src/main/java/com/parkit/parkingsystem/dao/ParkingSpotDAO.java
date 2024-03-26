@@ -16,14 +16,6 @@ public class ParkingSpotDAO {
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-    /**
-     * Permet de trouver une place de parking disponnible en fonction du type de véhicule.
-     *
-     * @param parkingType le type de place de parking souhaité.
-     *
-     * @return un entier représentant le numéro de la place de parking attribué.
-     * Si l'entier retourné est -1 cela signifie qu'il n'y a plus de place de parking disponnible pour le type de véhicule.
-     */
     public int getNextAvailableSlot(ParkingType parkingType){
         Connection con = null;
         int result=-1;
@@ -45,15 +37,8 @@ public class ParkingSpotDAO {
         return result;
     }
 
-    /**
-     * Permet d'update le statut de la place de parking passée en argument dans la BDD.
-     *
-     * @param parkingSpot la place de parking dont le status d'occupation doit être modifiée.
-     *
-     * @return true si la place de parking a été modifiée, sinon false.
-     */
+
     public boolean updateParking(ParkingSpot parkingSpot){
-        //update the availability fo that parking slot
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();

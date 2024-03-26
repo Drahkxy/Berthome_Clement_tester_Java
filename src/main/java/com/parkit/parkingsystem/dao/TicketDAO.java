@@ -20,13 +20,7 @@ public class TicketDAO {
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-    /**
-     * Permet de créer un ticket en BDD.
-     *
-     * @param ticket le ticket à enregistrer en BDD.
-     *
-     * @return
-     */
+
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
@@ -93,5 +87,22 @@ public class TicketDAO {
             dataBaseConfig.closeConnection(con);
         }
         return false;
+    }
+
+    public int getNbTicket(String vehicleRegNumber) {
+        Connection con = null;
+        int count = 0;
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKET);
+            ps.setString(1, vehicleRegNumber);
+            ResultSet rs = ps.executeQuery();
+            count = rs.getInt(1);
+        } catch (Exception e) {
+            logger.error("Error saving ticket info", e);
+        }finally {
+            dataBaseConfig.closeConnection(con);
+            return count;
+        }
     }
 }

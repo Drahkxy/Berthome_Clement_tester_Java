@@ -49,4 +49,13 @@ public class ParkingSpot {
     public int hashCode() {
         return number;
     }
+
+    @Override
+    public String toString () {
+        return "ParkingSpot{" +
+                "number=" + number +
+                ", parkingType=" + parkingType +
+                ", isAvailable=" + isAvailable +
+                '}';
+    }
 }
