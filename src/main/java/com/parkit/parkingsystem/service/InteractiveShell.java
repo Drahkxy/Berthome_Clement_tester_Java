@@ -6,22 +6,29 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Scanner;
-
 public class InteractiveShell {
 
     private static final Logger logger = LogManager.getLogger("InteractiveShell");
 
-    public static void loadInterface(){
+    private final InputReaderUtil inputReaderUtil;
+    private final ParkingSpotDAO parkingSpotDAO;
+    private final TicketDAO ticketDAO;
+    private final FareCalculatorService fareCalculatorService;
+    private final ParkingService parkingService;
+
+    public InteractiveShell (InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO, FareCalculatorService fareCalculatorService, ParkingService parkingService) {
+        this.inputReaderUtil = inputReaderUtil;
+        this.parkingSpotDAO = parkingSpotDAO;
+        this.ticketDAO = ticketDAO;
+        this.fareCalculatorService = fareCalculatorService;
+        this.parkingService = parkingService;
+    }
+
+    public void loadInterface(){
         logger.info("App initialized!!!");
         System.out.println("Welcome to Parking System!");
 
         boolean continueApp = true;
-        InputReaderUtil inputReaderUtil = new InputReaderUtil(new Scanner(System.in));
-        ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO();
-        TicketDAO ticketDAO = new TicketDAO();
-        FareCalculatorService fareCalculatorService = new FareCalculatorService();
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, fareCalculatorService);
 
         while(continueApp){
             loadMenu();
@@ -45,11 +52,11 @@ public class InteractiveShell {
         }
     }
 
-    private static void loadMenu(){
-        System.out.println("Please select an option. Simply enter the number to choose an action");
-        System.out.println("1 New Vehicle Entering - Allocate Parking Space");
-        System.out.println("2 Vehicle Exiting - Generate Ticket Price");
-        System.out.println("3 Shutdown System");
+    public void loadMenu(){
+        System.out.println("Please select an option. Simply enter the number to choose an action\n" +
+                "1 New Vehicle Entering - Allocate Parking Space\n" +
+                "2 Vehicle Exiting - Generate Ticket Price\n" +
+                "3 Shutdown System\n");
     }
 
 }

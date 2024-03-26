@@ -84,6 +84,7 @@ public class ParkingService {
         System.out.println("1 CAR");
         System.out.println("2 BIKE");
         int input = inputReaderUtil.readSelection();
+        System.out.println(input);
         switch(input){
             case 1: {
                 return ParkingType.CAR;
