@@ -37,7 +37,7 @@ public class ParkingService {
                 String vehicleRegNumber = getVehicleRegNumber();
 
                 if (verifyIfVehicleAlreadyKnown(vehicleRegNumber, true))
-                    System.out.println("Heureux de vous revoir ! En tant qu’utilisateur régulier de notre parking, vous allez obtenir une remise de 5%");
+                    System.out.println("Happy to see you again! As a frequent user of our parking, you will receive a 5% discount.");
 
                 parkingSpot.setAvailable(false);
                 parkingSpotDAO.updateParking(parkingSpot);
