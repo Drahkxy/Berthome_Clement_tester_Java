@@ -13,8 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,29 +29,26 @@ public class InputReaderUtilTest {
 		inputReaderUtil = new InputReaderUtil(scanner);
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "User provide {0} and result {1} expected")
 	@CsvSource({"1, 1", "2, 2", "test, -1"})
 	public void readSelection_withValidAndInvalidInput_test(String input, int resultExpected) {
 		when(scanner.nextLine()).thenReturn(input);
 
 		int result = inputReaderUtil.readSelection();
 
-		assertEquals(resultExpected, result);
+		assertThat(result).isEqualTo(resultExpected);
 
 		verify(scanner, times(1)).nextLine();
 	}
 
 	@Test
-	public void readVehicleRegistrationNumber_withValidInput_test(){
-		when(scanner.nextLine()).thenReturn("AB-123-CD");
+	public void readVehicleRegistrationNumber_withValidInput_test() throws Exception {
+		String vehicleRegNumber = "ABCDEF";
+		when(scanner.nextLine()).thenReturn(vehicleRegNumber);
 
-		try {
-			String result = inputReaderUtil.readVehicleRegistrationNumber();
+		String result = inputReaderUtil.readVehicleRegistrationNumber();
 
-			assertEquals("AB-123-CD", result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		assertThat(result).isEqualTo(vehicleRegNumber);
 
 		verify(scanner, times(1)).nextLine();
 	}
@@ -62,7 +59,7 @@ public class InputReaderUtilTest {
 	public void readVehicleRegistrationNumber_withInvalidInput_test(String input){
 		when(scanner.nextLine()).thenReturn(input);
 
-		assertThrows(Exception.class, () -> inputReaderUtil.readVehicleRegistrationNumber());
+		assertThatThrownBy(() -> inputReaderUtil.readVehicleRegistrationNumber()).isInstanceOf(Exception.class);
 
 		verify(scanner, times(1)).nextLine();
 	}

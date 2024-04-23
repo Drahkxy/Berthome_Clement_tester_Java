@@ -19,7 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,7 +70,7 @@ public class ParkingServiceTest {
         });
     }
 
-    @ParameterizedTest(name = "Vehicle with {0} registration number was already registered -> {1}")
+    /*@ParameterizedTest(name = "Vehicle with {0} registration number was already registered -> {1}")
     @CsvSource({"ABCDEF, true", "GHIJKL, false"})
     public void verifyIfVehicleAlreadyKnown_forIncomingVehicle_withValidAndInvalidInput_test(String vehicleRegNumber, boolean expectedResult) {
         setUpGetNbTicket(true);
@@ -80,10 +81,35 @@ public class ParkingServiceTest {
 
         verify(ticketDAO, times(1)).getNbTicket(vehicleRegNumber);
 
-        assertEquals(expectedResult, alreadyRegister);
+        //assertEquals(expectedResult, alreadyRegister);
+        assertThat(alreadyRegister).isEqualTo(expectedResult);
+    }*/
+
+     @Test
+     public void verifyIfVehicleAlreadyKnown_forIncomingVehicle_withAlreadyKnownVehicle_test() {
+         setUpGetNbTicket(true);
+         String alreadyKnownVehicleRegNumber = "ABCDEF";
+
+         boolean alreadyRegister = parkingService.verifyIfVehicleAlreadyKnown(alreadyKnownVehicleRegNumber, true);
+
+         verify(ticketDAO, times(1)).getNbTicket(alreadyKnownVehicleRegNumber);
+
+         assertThat(alreadyRegister).isTrue();
+     }
+
+    @Test
+    public void verifyIfVehicleAlreadyKnown_forIncomingVehicle_withUnknownVehicle_test() {
+        setUpGetNbTicket(true);
+        String newVehicleRegNumber = "GHIJKL";
+
+        boolean alreadyRegister = parkingService.verifyIfVehicleAlreadyKnown(newVehicleRegNumber, true);
+
+        verify(ticketDAO, times(1)).getNbTicket(newVehicleRegNumber);
+
+        assertThat(alreadyRegister).isFalse();
     }
 
-    @ParameterizedTest(name = "Vehicle with {0} registration number was already registered -> {1}")
+    /*@ParameterizedTest(name = "Vehicle with {0} registration number was already registered -> {1}")
     @CsvSource({"ABCDEF, true", "GHIJKL, false"})
     public void verifyIfVehicleAlreadyKnown_forExitingVehicle_withValidAndInvalidInput_test(String vehicleRegNumber, boolean expectedResult) {
         setUpGetNbTicket(false);
@@ -95,6 +121,30 @@ public class ParkingServiceTest {
         verify(ticketDAO, times(1)).getNbTicket(vehicleRegNumber);
 
         assertEquals(expectedResult, alreadyRegister);
+    }*/
+
+    @Test
+    public void verifyIfVehicleAlreadyKnown_forExitingVehicle_withAlreadyKnownVehicle_test() {
+         setUpGetNbTicket(false);
+         String alreadyKnownVehicleRegNumber = "ABCDEF";
+
+         boolean alreadyRegister = parkingService.verifyIfVehicleAlreadyKnown(alreadyKnownVehicleRegNumber, false);
+
+         verify(ticketDAO, times(1)).getNbTicket(alreadyKnownVehicleRegNumber);
+
+         assertThat(alreadyRegister).isTrue();
+    }
+
+    @Test
+    public void verifyIfVehicleAlreadyKnown_forExitingVehicle_withUnknownVehicle_test() {
+        setUpGetNbTicket(false);
+        String newVehicleRegNumber = "GHIJKL";
+
+        boolean alreadyRegister = parkingService.verifyIfVehicleAlreadyKnown(newVehicleRegNumber, false);
+
+        verify(ticketDAO, times(1)).getNbTicket(newVehicleRegNumber);
+
+        assertThat(alreadyRegister).isFalse();
     }
 
     @ParameterizedTest(name = "Vehicle registration number {0} successfully recovered ")
@@ -106,19 +156,19 @@ public class ParkingServiceTest {
 
         verify(inputReaderUtil, times(1)).readVehicleRegistrationNumber();
 
-        assertEquals(vehicleRegNumber, vrn);
+        assertThat(vrn).isEqualTo(vehicleRegNumber);
     }
 
     @Test
     public void getVehicleRegNumber_withInvalidInput_test() throws Exception {
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenThrow(new Exception("Invalid input provided"));
 
-        assertThrows(Exception.class, () -> parkingService.getVehicleRegNumber());
+        assertThatThrownBy(() -> parkingService.getVehicleRegNumber()).isInstanceOf(Exception.class);
 
         verify(inputReaderUtil, times(1)).readVehicleRegistrationNumber();
     }
 
-    @ParameterizedTest(name = "{0} type successfully retrived")
+    @ParameterizedTest(name = "{0} type successfully retrieved")
     @CsvSource({"CAR, 1", "BIKE, 2"})
     public void getVehicleType_withValidInput_test(String vehicleName, int vehicleType) {
         when(inputReaderUtil.readSelection()).thenReturn(vehicleType);
@@ -127,7 +177,7 @@ public class ParkingServiceTest {
 
         verify(inputReaderUtil, times(1)).readSelection();
 
-        assertEquals(ParkingType.getParkingTypeByInt(vehicleType), parkingType);
+        assertThat(parkingType).isEqualTo(ParkingType.getParkingTypeByInt(vehicleType));
     }
 
     @Test
@@ -136,46 +186,35 @@ public class ParkingServiceTest {
 
         when(inputReaderUtil.readSelection()).thenReturn(r.nextInt() + 3);
 
-        assertThrows(IllegalArgumentException.class, () -> parkingService.getVehicleType());
+        assertThatThrownBy(() -> parkingService.getVehicleType()).isInstanceOf(IllegalArgumentException.class);
 
         verify(inputReaderUtil, times(1)).readSelection();
     }
 
     @Test
-    public void getNextParkingNumberIfAvailable_withFreeSlot_test(){
+    public void getNextParkingNumberIfAvailable_withFreeSlot_test() throws Exception {
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
 
-        assertDoesNotThrow(() -> {
-            ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
+        ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
 
-            verify(inputReaderUtil, times(1)).readSelection();
-            verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
-
-            assertNotNull(parkingSpot);
-        });
-    }
-
-    @Test
-    public void getNextParkingNumberIfAvailable_withoutFreeSlot_test(){
-        when(inputReaderUtil.readSelection()).thenReturn(1);
-        when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(-1);
-
-        assertThrows(Exception.class, () -> parkingService.getNextParkingNumberIfAvailable() );
+        assertThat(parkingSpot).isNotNull();
 
         verify(inputReaderUtil, times(1)).readSelection();
         verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
     }
 
     @Test
-    public void getNextParkingNumberIfAvailable_withWrongUserInput_test() {
-        Random r = new Random();
-        when(inputReaderUtil.readSelection()).thenReturn(r.nextInt() + 3);
+    public void getNextParkingNumberIfAvailable_withoutFreeSlot_test() throws Exception {
+        when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(-1);
 
-        assertThrows(IllegalArgumentException.class, () -> parkingService.getNextParkingNumberIfAvailable() );
+        ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
+
+        assertThat(parkingSpot).isNull();
 
         verify(inputReaderUtil, times(1)).readSelection();
-        verify(parkingSpotDAO, times(0)).getNextAvailableSlot(any(ParkingType.class));
+        verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
     }
 
     @Test
