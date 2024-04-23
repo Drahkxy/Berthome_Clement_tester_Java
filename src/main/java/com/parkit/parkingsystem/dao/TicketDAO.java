@@ -59,7 +59,10 @@ public class TicketDAO {
                 ticket.setVehicleRegNumber(vehicleRegNumber);
                 ticket.setPrice(rs.getDouble(3));
                 ticket.setInTime(rs.getTimestamp(4).toLocalDateTime());
-                ticket.setOutTime(rs.getTimestamp(5).toLocalDateTime());
+                Timestamp outTime = rs.getTimestamp(5);
+                if (outTime != null) {
+                    ticket.setOutTime(outTime.toLocalDateTime());
+                }
             }
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
@@ -97,7 +100,9 @@ public class TicketDAO {
             PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKET);
             ps.setString(1, vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
-            count = rs.getInt(1);
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
         } catch (Exception e) {
             logger.error("Error saving ticket info", e);
         }finally {

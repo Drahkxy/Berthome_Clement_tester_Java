@@ -62,7 +62,6 @@ public class InteractiveShellTest {
 	@Test
 	public void loadInterface_processIncomingVehicleOneTime_test() {
 		when(inputReaderUtil.readSelection()).thenReturn(1, 1, 1, 3);
-		when(parkingService.processIncomingVehicle()).thenReturn(true);
 
 		interactiveShell.loadInterface();
 
@@ -72,7 +71,6 @@ public class InteractiveShellTest {
 	@Test
 	public void loadInterface_processIncomingVehicleMoreThanOneTime_test() {
 		when(inputReaderUtil.readSelection()).thenReturn(1, 1, 1, 1, 1, 3);
-		when(parkingService.processIncomingVehicle()).thenReturn(true);
 
 		interactiveShell.loadInterface();
 

@@ -51,8 +51,4 @@ public class FareCalculatorService {
         calculateFare(ticket, false);
     }
 
-    public void test () {
-        System.out.println("CA marcjhe pa iodskkjfk");
-    }
-
 }

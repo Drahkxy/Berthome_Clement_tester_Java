@@ -29,8 +29,7 @@ public class ParkingService {
     }
 
 
-    public boolean processIncomingVehicle() {
-        boolean success = false;
+    public void processIncomingVehicle() {
         try{
             ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
 
@@ -51,7 +50,7 @@ public class ParkingService {
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
 
-                success = ticketDAO.saveTicket(ticket);
+                ticketDAO.saveTicket(ticket);
 
                 System.out.println("Generated Ticket and saved in DB");
                 System.out.println("Please park your vehicle in spot number:"+parkingSpot.getId());
@@ -60,11 +59,10 @@ public class ParkingService {
         }catch(Exception e){
             logger.error("Unable to process incoming vehicle",e);
         }
-        return success;
     }
 
 
-    public String getVehicleRegNumber() throws Exception{
+    public String getVehicleRegNumber() throws Exception {
         System.out.println("Please type the vehicle registration number and press enter key");
         String vehicleRegNumber = inputReaderUtil.readVehicleRegistrationNumber();
         return vehicleRegNumber;
@@ -73,7 +71,6 @@ public class ParkingService {
 
     public boolean verifyIfVehicleAlreadyKnown(String vehicleRegNumber, boolean incomingVehicle) {
         int nbTicket = ticketDAO.getNbTicket(vehicleRegNumber);
-        System.out.println(nbTicket);
         int minimumNbTicket = incomingVehicle ? 1 : 2;
         return nbTicket >= minimumNbTicket ? true : false;
     }
@@ -85,22 +82,18 @@ public class ParkingService {
         System.out.println("2 BIKE");
         int input = inputReaderUtil.readSelection();
         System.out.println(input);
-        switch(input){
-            case 1: {
-                return ParkingType.CAR;
-            }
-            case 2: {
-                return ParkingType.BIKE;
-            }
-            default: {
+        return switch (input) {
+            case 1 -> ParkingType.CAR;
+            case 2 -> ParkingType.BIKE;
+            default -> {
                 System.out.println("Incorrect input provided");
                 throw new IllegalArgumentException("Entered input is invalid");
             }
-        }
+        };
     }
 
 
-    public ParkingSpot getNextParkingNumberIfAvailable(){
+    public ParkingSpot getNextParkingNumberIfAvailable() throws Exception {
         ParkingSpot parkingSpot = null;
         try{
             ParkingType parkingType = getVehicleType();
@@ -112,15 +105,16 @@ public class ParkingService {
             }
         }catch(IllegalArgumentException ie){
             logger.error("Error parsing user input for type of vehicle", ie);
+            throw ie;
         }catch(Exception e){
             logger.error("Error fetching next available parking slot", e);
+            throw e;
         }
         return parkingSpot;
     }
 
 
-    public boolean processExitingVehicle() {
-        boolean  success = false;
+    public void processExitingVehicle() {
         try{
             String vehicleRegNumber = getVehicleRegNumber();
 
@@ -141,14 +135,11 @@ public class ParkingService {
 
                 System.out.println("Please pay the parking fare:" + ticket.getPrice());
                 System.out.println("Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is:" + outTime);
-
-                success = true;
             }else{
                 System.out.println("Unable to update ticket information. Error occurred");
             }
         }catch(Exception e){
             logger.error("Unable to process exiting vehicle",e);
         }
-        return success;
     }
 }
